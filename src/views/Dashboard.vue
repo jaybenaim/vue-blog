@@ -1,5 +1,8 @@
 <template>
-  <div>Dashboard</div>
+  <div>
+    <div>Dashboard</div>
+    <router-link to="/login">Login</router-link>
+  </div>
 </template>
 
 <script>
