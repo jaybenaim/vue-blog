@@ -25,4 +25,22 @@ export default {
       likes: 0,
     });
   },
+  async likePost({ commit }, post) {
+    const userId = fb.auth.currentUser.uid;
+    const docId = `${userId}_${post.id}`;
+
+    // check if user has a liked post
+    const doc = await fb.likesCollection.doc(docId).get();
+    if (doc.exists) return;
+
+    // create post
+    await fb.likesCollection.doc(docId).set({
+      postId: post.id,
+      userId,
+    });
+    // update post likes count
+    fb.postsCollection.doc(post.id).update({
+      likes: post.likesCount + 1,
+    });
+  },
 };
