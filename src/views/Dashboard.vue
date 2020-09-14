@@ -57,17 +57,18 @@
                 <a @click="viewPost(post)">view full post </a>
               </li>
               <li v-if="post.userId === userId">
-                <a @click="editPost(post)">
-                  <span
-                    v-if="beingEdited && post.id === selectedPost.id"
-                    @click="updatePost(post)"
-                    >save</span
-                  >
-                  <span v-else>edit post</span>
-                </a>
+                <button
+                  v-if="beingEdited && post.id === selectedPost.id"
+                  @click="updatePost(post)"
+                  :disabled="editedPost.content === ''"
+                  class="uk-button-primary"
+                >
+                  save
+                </button>
+                <a @click="editPost(post)" v-else>edit</a>
               </li>
               <li v-if="post.userId === userId">
-                <a @click="deletePost(post)" style="color:red;">delete post </a>
+                <a @click="deletePost(post)" style="color:red;">delete</a>
               </li>
             </ul>
           </div>
