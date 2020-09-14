@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import authActions from "./actions/authActions";
 import postActions from "./actions/postActions";
+import settingsActions from "./actions/settingsActions";
 
 Vue.use(Vuex);
 
@@ -19,7 +20,7 @@ const store = new Vuex.Store({
       state.posts = val;
     },
   },
-  actions: { ...authActions, ...postActions },
+  actions: { ...authActions, ...postActions, ...settingsActions },
   modules: {},
 });
 
