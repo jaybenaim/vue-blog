@@ -1,5 +1,5 @@
-import * as fb from "../firebase";
-import router from "../router/index";
+import * as fb from "@/firebase";
+import router from "@/router/index";
 
 export default {
   async login({ dispatch }, form) {
