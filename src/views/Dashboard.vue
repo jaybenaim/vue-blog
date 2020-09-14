@@ -28,6 +28,11 @@
         ></CommentModal>
       </transition>
       <div class="col2">
+        <transition name="fade">
+          <p v-if="showAlert" :class="alertMessage ? 'success' : 'danger'">
+            {{ alertMessage }}
+          </p>
+        </transition>
         <div v-if="posts.length">
           <div v-for="post in posts" :key="post.id" class="post">
             <h5>{{ post.userName }}</h5>
@@ -129,6 +134,8 @@ export default {
       fullPost: {},
       postComments: [],
       beingEdited: false,
+      showAlert: false,
+      alertMessage: "",
     };
   },
   components: { CommentModal },
@@ -179,7 +186,18 @@ export default {
       this.beingEdited = false;
       this.selectedPost = {};
     },
-    deletePost(post) {},
+    async deletePost(post) {
+      await postsCollection
+        .doc(post.id)
+        .delete()
+        .then((res) => (this.alertMessage = "Item deleted"))
+        .catch((err) => (this.alertMessage = "Error deleting item"));
+
+      this.showAlert = !this.showAlert;
+      setTimeout(() => {
+        this.showAlert = !this.showAlert;
+      }, 2000);
+    },
     closePostModal() {
       this.postComments = [];
       this.showPostModal = false;
