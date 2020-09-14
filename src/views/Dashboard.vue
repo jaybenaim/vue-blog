@@ -32,7 +32,10 @@
           <div v-for="post in posts" :key="post.id" class="post">
             <h5>{{ post.userName }}</h5>
             <span>{{ post.createdOn | formatDate }}</span>
-            <p>{{ post.content | trimLength }}</p>
+            <div v-if="beingEdited && post.id === selectedPost.id">
+              <textarea v-model.trim="editedPost.content"></textarea>
+            </div>
+            <p v-else>{{ post.content | trimLength }}</p>
             <ul>
               <li>
                 <a @click="toggleCommentModal(post)"
@@ -47,6 +50,19 @@
               </li>
               <li>
                 <a @click="viewPost(post)">view full post </a>
+              </li>
+              <li v-if="post.userId === userId">
+                <a @click="editPost(post)">
+                  <span
+                    v-if="beingEdited && post.id === selectedPost.id"
+                    @click="updatePost(post)"
+                    >save</span
+                  >
+                  <span v-else>edit post</span>
+                </a>
+              </li>
+              <li v-if="post.userId === userId">
+                <a @click="deletePost(post)" style="color:red;">delete post </a>
               </li>
             </ul>
           </div>
@@ -96,7 +112,7 @@
 import { mapState } from "vuex";
 import moment from "moment";
 import CommentModal from "@/components/CommentModal";
-import { commentsCollection } from "@/firebase";
+import { commentsCollection, postsCollection, auth } from "@/firebase";
 
 export default {
   data() {
@@ -104,16 +120,23 @@ export default {
       post: {
         content: "",
       },
+      editedPost: {
+        content: "",
+      },
       showCommentModal: false,
       selectedPost: {},
       showPostModal: false,
       fullPost: {},
       postComments: [],
+      beingEdited: false,
     };
   },
   components: { CommentModal },
   computed: {
     ...mapState(["userProfile", "posts"]),
+    userId() {
+      return auth.currentUser.uid;
+    },
   },
   methods: {
     createPost() {
@@ -145,6 +168,18 @@ export default {
       this.fullPost = post;
       this.showPostModal = true;
     },
+    editPost(post) {
+      this.selectedPost = post;
+      this.beingEdited = true;
+    },
+    async updatePost(post) {
+      await postsCollection.doc(post.id).update({
+        content: this.editedPost.content,
+      });
+      this.beingEdited = false;
+      this.selectedPost = {};
+    },
+    deletePost(post) {},
     closePostModal() {
       this.postComments = [];
       this.showPostModal = false;
