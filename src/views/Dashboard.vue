@@ -190,8 +190,8 @@ export default {
       await postsCollection
         .doc(post.id)
         .delete()
-        .then((res) => (this.alertMessage = "Item deleted"))
-        .catch((err) => (this.alertMessage = "Error deleting item"));
+        .then((res) => (this.alertMessage = "Post deleted"))
+        .catch((err) => (this.alertMessage = "Error deleting Post"));
 
       this.showAlert = !this.showAlert;
       setTimeout(() => {
